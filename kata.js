@@ -47,7 +47,7 @@ function turnRight(rover) {
 // Iteration 3 | Moving the Rover
 
 function moveForward(rover) {
-  rover.travelLog.push({ x: rover.x, y: rover.y }); //Iteration 5 | Tracking
+   
   if (
     // Bonus 1 | Enforce Boundaries
     (rover.direction === "N" && rover.y === 0) ||
@@ -55,9 +55,10 @@ function moveForward(rover) {
     (rover.direction === "W" && rover.x === 0) ||
     (rover.direction === "E" && rover.x === 9)
   ) {
-    console.log("you can´t move the rover off the grid, last coordinates logged");
+    console.log("you can´t move the rover off the grid");
   } else {
     console.log("moveForward was called, last coordinates logged");
+    rover.travelLog.push({ x: rover.x, y: rover.y }); //Iteration 5 | Tracking
 
     if (rover.direction === "N") {
       rover.y--;
@@ -77,17 +78,18 @@ function moveForward(rover) {
 // Bonus 2 | Move Backwards
 
 function moveBackwards(rover) {
-  rover.travelLog.push({ x: rover.x, y: rover.y }); //Iteration 5 | Tracking
+   
   if (
     // Bonus 1 | Enforce Boundaries
-    (rover.direction[0] === "N" && rover.y === 9) ||
-    (rover.direction[0] === "S" && rover.y === 0) ||
-    (rover.direction[0] === "W" && rover.x === 9) ||
-    (rover.direction[0] === "E" && rover.x === 0)
+    (rover.direction === "N" && rover.y === 9) ||
+    (rover.direction === "S" && rover.y === 0) ||
+    (rover.direction === "W" && rover.x === 9) ||
+    (rover.direction === "E" && rover.x === 0)
   ) {
-    console.log("you can´t move the rover off the grid, last coordinates logged");
+    console.log("you can´t move the rover off the grid");
   } else {
     console.log("moveBackwards was called, last coordinates logged");
+    rover.travelLog.push({ x: rover.x, y: rover.y }); //Iteration 5 | Tracking
 
     if (rover.direction === "N") {
       rover.y++;
@@ -124,7 +126,9 @@ function command(rover, orders) {
         break;
     }
   }
-  console.log(`travelLog: ${util.inspect(rover.travelLog)}`);
+  if (rover.travelLog.length > 0) {
+    console.log(`travelLog: ${util.inspect(rover.travelLog)}`);
+  }
 }
 
 command(rover, "rffzzylf");
