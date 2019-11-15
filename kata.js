@@ -3,23 +3,102 @@
 
 // Bonus 4 | Obstacles is open !!!
 
-const util = require("util");
+//const util = require("util");
 
-let grid = {
-  x: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-  y: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-  obstacle: [{x:5, y:5}, {x:2, y:3}]
-};
+let obstacle = [
+  { x: 3, y: 0 },
+  { x: 0, y: 1 },
+  { x: 5, y: 4 }
+];
 
-
-let rover = { //Iteration 1 | The Rover Object
-  compass: ["N", "E", "S", "W"], 
+let rover = {
+  //Iteration 1 | The Rover Object
+  compass: ["N", "E", "S", "W"],
   direction: "N",
-  x:0,
-  y:0,
+  position: { x: 0, y: 0 },
   travelLog: [],
-  obstacleWarn: false // Preperation for Bonus 4 | Obstacles
+  obstacleWarn: false // Bonus 4 | Obstacles
 };
+
+// Bonus 4 | Obstacles
+
+// Rover move forward -> check for obstacle
+
+function enableObstacleWarningForward() {
+  for (let i = 0; i < obstacle.length; i++) {
+    if (
+      rover.direction === "N" &&
+      rover.position.y - 1 === obstacle[i].y &&
+      rover.position.x === obstacle[i].x
+    ) {
+      rover.obstacleWarn = true;
+      break;
+    }
+    if (
+      rover.direction === "S" &&
+      rover.position.y + 1 === obstacle[i].y &&
+      rover.position.x === obstacle[i].x
+    ) {
+      rover.obstacleWarn = true;
+      break;
+    }
+    if (
+      rover.direction === "E" &&
+      rover.position.x + 1 === obstacle[i].x &&
+      rover.position.y === obstacle[i].y
+    ) {
+      rover.obstacleWarn = true;
+      break;
+    }
+    if (
+      rover.direction === "W" &&
+      rover.position.x - 1 === obstacle[i].x &&
+      rover.position.y === obstacle[i].y
+    ) {
+      rover.obstacleWarn = true;
+      break;
+    }
+  }
+}
+
+// Rover move backward -> check for obstacle
+
+function enableObstacleWarningBackwards() {
+  for (let i = 0; i < obstacle.length; i++) {
+    if (
+      rover.direction === "N" &&
+      rover.position.y + 1 === obstacle[i].y &&
+      rover.position.x === obstacle[i].x
+    ) {
+      rover.obstacleWarn = true;
+      break;
+    }
+    if (
+      rover.direction === "S" &&
+      rover.position.y - 1 === obstacle[i].y &&
+      rover.position.x === obstacle[i].x
+    ) {
+      rover.obstacleWarn = true;
+      break;
+    }
+    if (
+      rover.direction === "E" &&
+      rover.position.x - 1 === obstacle[i].x &&
+      rover.position.y === obstacle[i].y
+    ) {
+      rover.obstacleWarn = true;
+      break;
+    }
+    if (
+      rover.direction === "W" &&
+      rover.position.x + 1 === obstacle[i].x &&
+      rover.position.y === obstacle[i].y
+    ) {
+      rover.obstacleWarn = true;
+      break;
+    }
+  }
+}
 
 // Iteration 2 | Turning the Rover
 
@@ -43,34 +122,40 @@ function turnRight(rover) {
   return rover.direction;
 }
 
-
 // Iteration 3 | Moving the Rover
 
 function moveForward(rover) {
-   
+  enableObstacleWarningForward();
   if (
     // Bonus 1 | Enforce Boundaries
-    (rover.direction === "N" && rover.y === 0) ||
-    (rover.direction === "S" && rover.y === 9) ||
-    (rover.direction === "W" && rover.x === 0) ||
-    (rover.direction === "E" && rover.x === 9)
+    (rover.direction === "N" && rover.position.y === 0) ||
+    (rover.direction === "S" && rover.position.y === 9) ||
+    (rover.direction === "W" && rover.position.x === 0) ||
+    (rover.direction === "E" && rover.position.x === 9)
   ) {
     console.log("you can´t move the rover off the grid");
   } else {
     console.log("moveForward was called, last coordinates logged");
-    rover.travelLog.push({ x: rover.x, y: rover.y }); //Iteration 5 | Tracking
+    rover.travelLog.push({ x: rover.position.x, y: rover.position.y }); //Iteration 5 | Tracking
 
-    if (rover.direction === "N") {
-      rover.y--;
-    }
-    if (rover.direction === "E") {
-      rover.x++;
-    }
-    if (rover.direction === "S") {
-      rover.y++;
-    }
-    if (rover.direction[0] === "W") {
-      rover.x--;
+    if (rover.obstacleWarn === false) {
+      switch (rover.direction) {
+        case "N":
+          rover.position.y--;
+          break;
+        case "E":
+          rover.position.x++;
+          break;
+        case "S":
+          rover.position.y++;
+          break;
+        case "W":
+          rover.position.x--;
+          break;
+      }
+    } else {
+      console.log("Obstacle found! Move rover to different direction.");
+      rover.obstacleWarn = false;
     }
   }
 }
@@ -78,30 +163,37 @@ function moveForward(rover) {
 // Bonus 2 | Move Backwards
 
 function moveBackwards(rover) {
-   
+  enableObstacleWarningBackwards();
   if (
     // Bonus 1 | Enforce Boundaries
-    (rover.direction === "N" && rover.y === 9) ||
-    (rover.direction === "S" && rover.y === 0) ||
-    (rover.direction === "W" && rover.x === 9) ||
-    (rover.direction === "E" && rover.x === 0)
+    (rover.direction === "N" && rover.position.y === 9) ||
+    (rover.direction === "S" && rover.position.y === 0) ||
+    (rover.direction === "W" && rover.position.x === 9) ||
+    (rover.direction === "E" && rover.position.x === 0)
   ) {
     console.log("you can´t move the rover off the grid");
   } else {
     console.log("moveBackwards was called, last coordinates logged");
-    rover.travelLog.push({ x: rover.x, y: rover.y }); //Iteration 5 | Tracking
+    rover.travelLog.push({ x: rover.position.x, y: rover.position.y }); //Iteration 5 | Tracking
 
-    if (rover.direction === "N") {
-      rover.y++;
-    }
-    if (rover.direction === "E") {
-      rover.x--;
-    }
-    if (rover.direction === "S") {
-      rover.y--;
-    }
-    if (rover.direction === "W") {
-      rover.x++;
+    if (rover.obstacleWarn === false) {
+      switch (rover.direction) {
+        case "N":
+          rover.position.y++;
+          break;
+        case "E":
+          rover.position.x--;
+          break;
+        case "S":
+          rover.position.y--;
+          break;
+        case "W":
+          rover.position.x++;
+          break;
+      }
+    } else {
+      console.log("Obstacle found! Move rover to different direction.");
+      rover.obstacleWarn = false;
     }
   }
 }
@@ -111,7 +203,9 @@ function moveBackwards(rover) {
 function command(rover, orders) {
   for (let i = 0; i < orders.length; i++) {
     let order = orders[i];
-    switch (order) { // Bonus 3 | Validate Inputs - already done by case definition
+    switch (
+      order // Bonus 3 | Validate Inputs - already done by case definition
+    ) {
       case "l":
         turnLeft(rover);
         break;
@@ -127,8 +221,8 @@ function command(rover, orders) {
     }
   }
   if (rover.travelLog.length > 0) {
-    console.log(`travelLog: ${util.inspect(rover.travelLog)}`);
+    console.log(`travelLog: ${JSON.stringify(rover.travelLog)}`);
   }
 }
 
-command(rover, "rffzzylf");
+command(rover, "rffffrfff");
