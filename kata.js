@@ -1,8 +1,6 @@
 // Rover Object Goes Here
 // ======================
 
-// Bonus 4 | Obstacles is open !!!
-
 //const util = require("util"); -> replaced by JSON.stringify
 
 let obstacle = [
