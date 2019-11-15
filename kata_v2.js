@@ -1,38 +1,33 @@
 // Rover Object Goes Here
 // ======================
 
-//const util = require("util"); -> replaced by JSON.stringify
-
 let obstacle = [
   { x: 3, y: 0 },
   { x: 0, y: 1 },
   { x: 5, y: 4 }
 ];
 
-let rover = {
-  //Iteration 1 | The Rover Object
-  compass: ["N", "E", "S", "W"],
-  direction: "W",
+let kata = {
+  name: "kata",
+  direction: "N",
   position: { x: 0, y: 0 },
   travelLog: [],
-  obstacleWarn: false // Bonus 4 | Obstacles
+  obstacleWarn: false
 };
 
-function resetRover() {
-  rover = {
-    compass: ["N", "E", "S", "W"],
-    direction: "N",
-    position: { x: 0, y: 0 },
-    travelLog: [],
-    obstacleWarn: false
-  };
-}
+let ernie = {
+  name: "ernie",
+  direction: "N",
+  position: { x: 5, y: 5 },
+  travelLog: [],
+  obstacleWarn: false
+};
 
 // Bonus 4 | Obstacles
 
 // Rover move forward -> check for obstacle
 
-function enableObstacleWarningForward() {
+function enableObstacleWarningForward(rover) {
   for (let i = 0; i < obstacle.length; i++) {
     if (
       rover.direction === "N" &&
@@ -71,7 +66,7 @@ function enableObstacleWarningForward() {
 
 // Rover move backward -> check for obstacle
 
-function enableObstacleWarningBackwards() {
+function enableObstacleWarningBackwards(rover) {
   for (let i = 0; i < obstacle.length; i++) {
     if (
       rover.direction === "N" &&
@@ -111,29 +106,47 @@ function enableObstacleWarningBackwards() {
 // Iteration 2 | Turning the Rover
 
 function turnLeft(rover) {
-  console.log("turnLeft was called!");
-  rover.direction = rover.compass[3];
-  console.log(`Rover is now facing ${rover.direction}`);
-  rover.compass.unshift(rover.direction);
-  rover.compass.pop(rover.direction);
-  //console.log(rover.compass); // uncomment for test
-  return rover.direction;
+  console.log(`${rover.name} turnLeft was called!`);
+  switch (rover.direction) {
+    case "N":
+      rover.direction = "W";
+      break;
+    case "W":
+      rover.direction = "S";
+      break;
+    case "S":
+      rover.direction = "E";
+      break;
+    case "E":
+      rover.direction = "N";
+      break;
+  }
+  console.log(`${rover.name} is now facing ${rover.direction}`);
 }
 
 function turnRight(rover) {
-  console.log("turnRight was called!");
-  rover.direction = rover.compass[1];
-  console.log(`Rover is now facing ${rover.direction}`);
-  rover.compass.push(rover.compass[0]);
-  rover.compass.shift(rover.direction);
-  //console.log(rover.compass); // uncomment for test
-  return rover.direction;
+  console.log(`${rover.name} turnRight was called!`);
+  switch (rover.direction) {
+    case "N":
+      rover.direction = "E";
+      break;
+    case "E":
+      rover.direction = "S";
+      break;
+    case "S":
+      rover.direction = "W";
+      break;
+    case "W":
+      rover.direction = "N";
+      break;
+  }
+  console.log(`${rover.name} is now facing ${rover.direction}`);
 }
 
 // Iteration 3 | Moving the Rover
 
 function moveForward(rover) {
-  enableObstacleWarningForward();
+  enableObstacleWarningForward(rover);
   if (
     // Bonus 1 | Enforce Boundaries
     (rover.direction === "N" && rover.position.y === 0) ||
@@ -143,7 +156,9 @@ function moveForward(rover) {
   ) {
     console.log("you can´t move the rover off the grid");
   } else {
-    console.log("moveForward was called, last coordinates logged");
+    console.log(
+      `${rover.name} moveForward was called, last coordinates logged`
+    );
     rover.travelLog.push({ x: rover.position.x, y: rover.position.y }); //Iteration 5 | Tracking
 
     if (rover.obstacleWarn === false) {
@@ -162,7 +177,7 @@ function moveForward(rover) {
           break;
       }
     } else {
-      console.log("Obstacle found! Move rover to different direction.");
+      console.log(`Obstacle found! Move ${rover.name} to different direction.`);
       rover.obstacleWarn = false;
     }
   }
@@ -171,7 +186,7 @@ function moveForward(rover) {
 // Bonus 2 | Move Backwards
 
 function moveBackwards(rover) {
-  enableObstacleWarningBackwards();
+  enableObstacleWarningBackwards(rover);
   if (
     // Bonus 1 | Enforce Boundaries
     (rover.direction === "N" && rover.position.y === 9) ||
@@ -181,7 +196,9 @@ function moveBackwards(rover) {
   ) {
     console.log("you can´t move the rover off the grid");
   } else {
-    console.log("moveBackwards was called, last coordinates logged");
+    console.log(
+      `${rover.name} moveBackwards was called, last coordinates logged`
+    );
     rover.travelLog.push({ x: rover.position.x, y: rover.position.y }); //Iteration 5 | Tracking
 
     if (rover.obstacleWarn === false) {
@@ -200,7 +217,7 @@ function moveBackwards(rover) {
           break;
       }
     } else {
-      console.log("Obstacle found! Move rover to different direction.");
+      console.log(`Obstacle found! Move ${rover.name} to different direction.`);
       rover.obstacleWarn = false;
     }
   }
@@ -230,15 +247,13 @@ function command(rover, orders) {
   }
   // Implementation for successively moving Rovers -> Rovers parking position added to static obstacles
   obstacle.push(rover.position);
-  resetRover();
-  console.log("Rover parking position added to obstacles");
+  console.log(`${rover.name} parking position added to obstacles`);
   console.log(`Obstacles: ${JSON.stringify(obstacle)}`);
-
   if (rover.travelLog.length > 0) {
-    console.log(`TravelLog: ${JSON.stringify(rover.travelLog)}`);
+    console.log(`${rover.name} travelLog: ${JSON.stringify(rover.travelLog)}`);
   }
+  obstacle.push(rover.position);
 }
 
-// 2 Rovers starting subsequently 
-command(rover, "rff");
-command(rover, "rfffrff");
+command(kata, "rfffrff");
+command(ernie, "rff");
