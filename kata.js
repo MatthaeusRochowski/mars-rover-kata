@@ -3,7 +3,7 @@
 
 // Bonus 4 | Obstacles is open !!!
 
-//const util = require("util");
+//const util = require("util"); -> replaced by JSON.stringify
 
 let obstacle = [
   { x: 3, y: 0 },
@@ -14,11 +14,21 @@ let obstacle = [
 let rover = {
   //Iteration 1 | The Rover Object
   compass: ["N", "E", "S", "W"],
-  direction: "N",
+  direction: "W",
   position: { x: 0, y: 0 },
   travelLog: [],
   obstacleWarn: false // Bonus 4 | Obstacles
 };
+
+function resetRover() {
+  rover = {
+    compass: ["N", "E", "S", "W"],
+    direction: "N",
+    position: { x: 0, y: 0 },
+    travelLog: [],
+    obstacleWarn: false
+  };
+}
 
 // Bonus 4 | Obstacles
 
@@ -220,9 +230,17 @@ function command(rover, orders) {
         break;
     }
   }
+  // Implementation for successively moving Rovers -> Rovers parking position added to static obstacles
+  obstacle.push(rover.position);
+  resetRover();
+  console.log("Rover parking position added to obstacles");
+  console.log(`Obstacles: ${JSON.stringify(obstacle)}`);
+
   if (rover.travelLog.length > 0) {
-    console.log(`travelLog: ${JSON.stringify(rover.travelLog)}`);
+    console.log(`TravelLog: ${JSON.stringify(rover.travelLog)}`);
   }
 }
 
-command(rover, "rffffrfff");
+// 2 Rovers starting subsequently 
+command(rover, "rff");
+command(rover, "rfffrff");
